@@ -17,6 +17,20 @@ from .logging import get_logger
 logger = get_logger("parser")
 
 
+def remove_cpp_comments(code: str):
+    # コメント部分を排除する正規表現パターン
+    pattern = r'// cppygen off\n(.*?)// cppygen on\n'
+    result, num_deleted_lines = re.subn(pattern, '', code, flags=re.DOTALL)
+    print(f"削除された行数: {num_deleted_lines}")
+    
+    removed_parts = re.findall(pattern, code, flags=re.DOTALL)
+    for part in removed_parts:
+        print('Removed part:')
+        print(part)
+        print()
+    return result
+
+
 class Parser:
     """
     Analyze C++ source files and Generate pybind11 C++ code.
@@ -223,7 +237,7 @@ class Parser:
         ignore_child_namespace=False 
     ):
         with open(filename, "r") as f:
-            data = f.read()
+            data = remove_cpp_comments(f.read())
         self.parse(data, filename, lang, flags, with_diagnostic=True, mode=mode, ignore_child_namespace=ignore_child_namespace)
 
     def to_decl_string(self):
