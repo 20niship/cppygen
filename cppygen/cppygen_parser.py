@@ -179,6 +179,9 @@ class Parser:
 
             # Recursive Function
             def visit(x: Cursor, namespace: List[str], module_name: str):
+                if len(namespace) > 1 and ignore_child_namespace:
+                    logger.warn(f"skip : {'::'.join(namespace)}::{module_name}")
+                    return
                 if mode == "source":
                     if lang == "cpp":
                         self._extract_functions(x, namespace, module_name)
