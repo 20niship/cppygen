@@ -21,8 +21,7 @@ def remove_cpp_comments(code: str):
     # コメント部分を排除する正規表現パターン
     pattern = r'// cppygen off\n(.*?)// cppygen on\n'
     result, num_deleted_lines = re.subn(pattern, '', code, flags=re.DOTALL)
-    print(f"削除された行数: {num_deleted_lines}")
-    
+
     removed_parts = re.findall(pattern, code, flags=re.DOTALL)
     for part in removed_parts:
         print('Removed part:')
