@@ -1,7 +1,7 @@
 import argparse
 import pathlib
 
-from .logging import get_logger
+from .cppygen_logging import get_logger
 
 logger = get_logger("cppygen command")
 
