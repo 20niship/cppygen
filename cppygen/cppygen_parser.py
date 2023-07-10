@@ -160,6 +160,7 @@ class Parser:
         flags=[],
         with_diagnostic=False,
         mode: Literal["source"] | Literal["header"] = "source",
+        ignore_child_namespace=False
     ):
         tu: TranslationUnit = self._get_tu(source, filename, flags)
         if with_diagnostic:
@@ -191,6 +192,9 @@ class Parser:
                 for i in list(x.get_children()):
                     i: Cursor
                     namespace_in = copy.deepcopy(namespace)
+                    if len(namespace) > 1 and ignore_child_namespace:
+                        logger.warn(f"skip : {'::'.join(namespace_in)}")
+                        continue
                     if i.kind == CursorKind.NAMESPACE:  # type: ignore
                         submod = Submodule()
                         submod.set_name(i.spelling)
@@ -213,10 +217,11 @@ class Parser:
         lang: str = "cpp",
         flags=[],
         mode: Literal["header"] | Literal["source"] = "source",
+        ignore_child_namespace=False 
     ):
         with open(filename, "r") as f:
             data = f.read()
-        self.parse(data, filename, lang, flags, with_diagnostic=True, mode=mode)
+        self.parse(data, filename, lang, flags, with_diagnostic=True, mode=mode, ignore_child_namespace=ignore_child_namespace)
 
     def to_decl_string(self):
         return (

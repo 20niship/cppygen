@@ -81,18 +81,21 @@ def run():
     flags.extend([i for i in (args.flags or "").split(";")])
     flags.extend([f"-I{i}" for i in (args.include_directories or "").split(";")])
 
+    ignore_child_namespace = configs.get("ignore_child_namespace", False)
+
     if mode == "source":
         for i in sources:
-            cppygen.parse_from_file(i, lang="cpp", flags=configs.get("flags", []))
+            cppygen.parse_from_file(i, lang="cpp", flags=configs.get("flags", []), ignore_child_namespace=ignore_child_namespace)
 
         for i in headers:
-            cppygen.parse_from_file(i, lang="hpp", flags=configs.get("flags", []))
+            cppygen.parse_from_file(i, lang="hpp", flags=configs.get("flags", []), ignore_child_namespace=ignore_child_namespace)
     else:
         cppygen.parse(
             source="\n".join([f"#include<{i}>" for i in headers]),
             filename="tmp.hpp",
             lang="hpp",
             mode="header",
+            ignore_child_namespace=ignore_child_namespace
         )
 
     if configs.get("include_headers"):
